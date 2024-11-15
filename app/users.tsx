@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, FlatList, StyleSheet, Image, TouchableOpacity, Platform, PermissionsAndroid } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, RTCView, mediaDevices } from 'react-native-webrtc';
 
@@ -9,6 +9,8 @@ import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, RTCView, med
 const socket = io('http://localhost:3000', { transports: ['websocket'] });
 
 const Users = () => {
+  const dispatch = useDispatch();
+  const { access_token, user_id } = useSelector(state => state.auth);  // Assuming auth contains access_token and user_id in the Redux store
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -82,15 +84,12 @@ const Users = () => {
 
   const registerUser = async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');
-      const userId = await AsyncStorage.getItem('user_id');
-
-      if (!userId || !token) {
+      if (!user_id || !access_token) {
         throw new Error("User not authenticated.");
       }
 
-      socket.emit('registerUser', { userId });
-      console.log(`User registered with ID: ${userId}`);
+      socket.emit('registerUser', { userId: user_id });
+      console.log(`User registered with ID: ${user_id}`);
     } catch (error) {
       console.error("Error registering user:", error);
     }
@@ -98,11 +97,10 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (!token) throw new Error("No token found");
+      if (!access_token) throw new Error("No token found");
 
-      const response = await axios.get('http://localhost:8082/api/users/search?search=&include=avatar', {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get('http://krowdz.net/api/users/search?search=&include=avatar', {
+        headers: { Authorization: `Bearer ${access_token}` },
       });
       setUsers(response.data.data);
     } catch (error) {
@@ -286,9 +284,10 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 10,
-    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
 });
 
