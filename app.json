@@ -9,13 +9,19 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.umar40b.conversation",
+      "infoPlist": {
+      "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+      "NSMicrophoneUsageDescription": "This app uses the microphone to scan barcodes on event tickets."
+    }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.umar40b.conversation"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +42,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d1d01108-5a6d-4f9b-85fa-e05eed98969f"
+      }
     }
   }
 }
